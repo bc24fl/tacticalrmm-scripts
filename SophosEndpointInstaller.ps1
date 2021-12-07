@@ -1,4 +1,7 @@
 <#
+.SOURCE
+    Original Source Code: https://github.com/bc24fl/tacticalrmm-scripts/blob/main/SophosEndpointInstaller.ps1
+
 .SYNOPSIS
     Installs Sophos Endpoint via the Sophos API https://developer.sophos.com/apis
 
