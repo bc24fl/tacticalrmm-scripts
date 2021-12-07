@@ -7,9 +7,9 @@
 
 .REQUIREMENTS
     You will need API credentials to use this script.  The instructions are slightly different depending who you are.
-    For Partners		: https://developer.sophos.com/getting-started (Only Step 1 Required For API Credentials)
-    For Organizations	: https://developer.sophos.com/getting-started-organization (Only Step 1 Required For API Credentials)
-    For Tenants			: https://developer.sophos.com/getting-started-tenant (Only Step 1 Required For API Credentials)
+    For Partners : https://developer.sophos.com/getting-started (Only Step 1 Required For API Credentials)
+    For Organizations: https://developer.sophos.com/getting-started-organization (Only Step 1 Required For API Credentials)
+    For Tenants	: https://developer.sophos.com/getting-started-tenant (Only Step 1 Required For API Credentials)
 
 .INSTRUCTIONS
     1. Get your API Credentials (Client Id, Client Secret) using the steps in the Requirements section
@@ -64,9 +64,9 @@ Write-Host "Running Sophos Endpoint Installation Script On: $env:COMPUTERNAME"
 # Find if workstation or server.  osInfo.ProductType returns 1 = workstation, 2 = domain controller, 3 = server
 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
 
-$urlAuth 	= "https://id.sophos.com/api/v2/oauth2/token"
-$urlWhoami 	= "https://api.central.sophos.com/whoami/v1"
-$urlTenant 	= "https://api.central.sophos.com/partner/v1/tenants?pageTotal=true"
+$urlAuth = "https://id.sophos.com/api/v2/oauth2/token"
+$urlWhoami = "https://api.central.sophos.com/whoami/v1"
+$urlTenant = "https://api.central.sophos.com/partner/v1/tenants?pageTotal=true"
 
 $authBody = @{
     "grant_type"="client_credentials"
@@ -75,9 +75,9 @@ $authBody = @{
     "scope"="token"
 }
 
-$authResponse 	= (Invoke-RestMethod -Method 'post' -Uri $urlAuth -Body $authBody)
-$authToken 		= $authResponse.access_token
-$authHeaders 	= @{Authorization = "Bearer $authToken"}
+$authResponse = (Invoke-RestMethod -Method 'post' -Uri $urlAuth -Body $authBody)
+$authToken = $authResponse.access_token
+$authHeaders = @{Authorization = "Bearer $authToken"}
 
 if ($authToken.length -eq 0){
 	Write-Host "Error, no authentication token received.  Please check your api credentials.  Exiting script."
@@ -85,8 +85,8 @@ if ($authToken.length -eq 0){
 }
 
 $whoAmIResponse = (Invoke-RestMethod -Method 'Get' -headers $authHeaders -Uri $urlWhoami)
-$myId 			= $whoAmIResponse.Id
-$myIdType 		= $whoAmIResponse.idType
+$myId = $whoAmIResponse.Id
+$myIdType = $whoAmIResponse.idType
 
 if ($myIdType.length -eq 0){
 	Write-Host "Error, no Whoami Id Type received.  Please check your api credentials or network connections.  Exiting script."
@@ -127,8 +127,8 @@ do {
 	}
 	
 	$tenantResponse = (Invoke-RestMethod -Method 'Get' -headers $requestHeaders -Uri $urlTenant)
-	$tenants 		= $tenantResponse.items
-	$totalPages 	= [int]$tenantResponse.pages.total
+	$tenants = $tenantResponse.items
+	$totalPages	= [int]$tenantResponse.pages.total
 	
 	foreach ($tenant in $tenants) {
 		if ($tenant.name -eq $TenantName){
@@ -149,9 +149,9 @@ $requestHeaders =@{
     'X-Tenant-ID' = $tenantId 
 }
 
-$urlEndpoint 				= "https://api-" + $tenantRegion + ".central.sophos.com/endpoint/v1/downloads"
-$endpointDownloadResponse 	= (Invoke-RestMethod -Method 'Get' -headers $requestHeaders -Uri $urlEndpoint)
-$endpointInstallers 		= $endpointDownloadResponse.installers
+$urlEndpoint = "https://api-" + $tenantRegion + ".central.sophos.com/endpoint/v1/downloads"
+$endpointDownloadResponse = (Invoke-RestMethod -Method 'Get' -headers $requestHeaders -Uri $urlEndpoint)
+$endpointInstallers = $endpointDownloadResponse.installers
 
 if ($endpointInstallers.length -eq 0){
 	Write-Host "Error, no installers received.  Please check your api credentials or network connections.  Exiting script."
