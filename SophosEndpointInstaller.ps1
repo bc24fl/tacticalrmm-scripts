@@ -137,7 +137,7 @@ do {
 		}
 	}
 	$currentPage += 1
-} until( $currentPage -ge $totalPages -Or ($tenantId.length -gt 1 ) )
+} until( $currentPage -gt $totalPages -Or ($tenantId.length -gt 1 ) )
 
 if ($tenantId.length -eq 0){
 	Write-Host "Error, no tenant found with the provided name.  Please check the name and try again.  Exiting script."
