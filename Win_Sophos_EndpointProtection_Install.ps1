@@ -1,7 +1,4 @@
 <#
-.SOURCE
-    Source Code: https://github.com/bc24fl/tacticalrmm-scripts/blob/main/SophosEndpointInstaller.ps1
-
 .SYNOPSIS
     Installs Sophos Endpoint via the Sophos API https://developer.sophos.com/apis
 
@@ -19,14 +16,14 @@
         c) SophosClientSecret as type text
     3. In Tactical RMM, Right-click on each client and select Edit.  Fill in the SophosTenantName, SophosClientId, and SophosClientSecret.  
        Make sure the SophosTenantName is EXACTLY how it is displayed in your Sophos Partner / Central Dashboard.  A partner can find the list of tenants on the left menu under Sophos Central Customers
-    4. Copy paste this script in Tactical RMM >> Script Manager and create the follow script arguments
+    4. Create the follow script arguments
         a) -ClientId {{client.SophosClientId}}
         b) -ClientSecret {{client.SophosClientSecret}}
         c) -TenantName {{client.SophosTenantName}}
         d) -Products (Optional Parameter) - A list of products to install, comma-separated.  Available options are: antivirus, intercept, mdr, deviceEncryption or all.  Example - To install Antivirus, Intercept, and Device encryption you would pass "antivirus,intercept,deviceEncryption".  
 		
 .NOTES
-	V1.0 Initial Release by Community Members bc24fl (Author) and iamKhris (Tester). 
+	V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
 	V1.1 Added error handling for each Invoke-Rest Call for easier troubleshooting and graceful exit.
 	V1.2 Added support for more than 100 tenants.
 	
