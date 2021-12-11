@@ -12,16 +12,16 @@
 
 #>
 
-$AllPrinters = Get-Printer
-foreach ($Printer in $AllPrinters) {
-    $PrintJobs = Get-PrintJob -PrinterName $($Printer.Name)
-    if ($PrintJobs) {
-        foreach ($Job in $PrintJobs) {
-            if ($Job.JobStatus -match 'Error') {
-				$stuckPrinterName = $Job.PrinterName
-				$stuckPrinterJob = $Job.Id
+$allPrinters = Get-Printer
+foreach ($printer in $allPrinters) {
+    $printJobs = Get-PrintJob -PrinterName $($printer.Name)
+    if ($printJobs) {
+        foreach ($job in $printJobs) {
+            if ($job.JobStatus -match 'Error') {
+				$stuckPrinterName = $job.PrinterName
+				$stuckPrinterJob = $job.Id
 				Write-Host "Restarting Job Id $stuckPrinterJob on printer $stuckPrinterName"
-                Restart-PrintJob -InputObject $Job
+                Restart-PrintJob -InputObject $job
             }
         }
     }
