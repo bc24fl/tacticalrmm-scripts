@@ -18,9 +18,9 @@ foreach ($Printer in $AllPrinters) {
     if ($PrintJobs) {
         foreach ($Job in $PrintJobs) {
             if ($Job.JobStatus -match 'Error') {
-				$stuckPrinterName = $Job.PrinterName
-				$stuckPrinterJob = $Job.Id
-				Write-Host "Restarting Job Id $stuckPrinterJob on printer $stuckPrinterName"
+		$stuckPrinterName = $Job.PrinterName
+		$stuckPrinterJob = $Job.Id
+		Write-Host "Restarting Job Id $stuckPrinterJob on printer $stuckPrinterName"
                 Restart-PrintJob -InputObject $Job
             }
         }
