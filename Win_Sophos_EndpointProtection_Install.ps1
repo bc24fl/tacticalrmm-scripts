@@ -39,18 +39,15 @@ param(
 )
 
 if ([string]::IsNullOrEmpty($ClientId)) {
-    Write-Output "ClientId must be defined. Use -ClientId <value> to pass it."
-    Exit 1
+    throw "ClientId must be defined. Use -ClientId <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($ClientSecret)) {
-    Write-Output "ClientSecret must be defined. Use -ClientSecret <value> to pass it."
-    Exit 1
+    throw "ClientSecret must be defined. Use -ClientSecret <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($TenantName)) {
-    Write-Output "TenantName must be defined. Use -TenantName <value> to pass it."
-    Exit 1
+    throw "TenantName must be defined. Use -TenantName <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($Products)) {
@@ -79,8 +76,7 @@ $authToken = $authResponse.access_token
 $authHeaders = @{Authorization = "Bearer $authToken"}
 
 if ($authToken.length -eq 0){
-	Write-Host "Error, no authentication token received.  Please check your api credentials.  Exiting script."
-	Exit 1
+	throw "Error, no authentication token received.  Please check your api credentials.  Exiting script."
 }
 
 $whoAmIResponse = (Invoke-RestMethod -Method 'Get' -headers $authHeaders -Uri $urlWhoami)
@@ -88,8 +84,7 @@ $myId = $whoAmIResponse.Id
 $myIdType = $whoAmIResponse.idType
 
 if ($myIdType.length -eq 0){
-	Write-Host "Error, no Whoami Id Type received.  Please check your api credentials or network connections.  Exiting script."
-	Exit 1
+	throw "Error, no Whoami Id Type received.  Please check your api credentials or network connections.  Exiting script."
 }
 
 if($myIdType -eq 'partner'){
@@ -111,8 +106,7 @@ elseif($myIdType -eq 'tenant'){
     }
 }
 else {
-    Write-Host "Error finding id type.  This script only supports Partner, Organization, and Tenant API's."
-    Exit 1
+    throw "Error finding id type.  This script only supports Partner, Organization, and Tenant API's."
 }
 
 # Cycle through all tenants until a tenant match, or all pages have exhausted.  
@@ -139,8 +133,7 @@ do {
 } until( $currentPage -gt $totalPages -Or ($tenantId.length -gt 1 ) )
 
 if ($tenantId.length -eq 0){
-	Write-Host "Error, no tenant found with the provided name.  Please check the name and try again.  Exiting script."
-	Exit 1
+	throw "Error, no tenant found with the provided name.  Please check the name and try again.  Exiting script."
 }
 
 $requestHeaders =@{
@@ -153,8 +146,7 @@ $endpointDownloadResponse = (Invoke-RestMethod -Method 'Get' -headers $requestHe
 $endpointInstallers = $endpointDownloadResponse.installers
 
 if ($endpointInstallers.length -eq 0){
-	Write-Host "Error, no installers received.  Please check your api credentials or network connections.  Exiting script."
-	Exit 1
+	throw "Error, no installers received.  Please check your api credentials or network connections.  Exiting script."
 }
 
 foreach ($installer in $endpointInstallers){
@@ -170,8 +162,7 @@ foreach ($installer in $endpointInstallers){
             $installUrl = $installer.downloadUrl
         }
         else{
-            Write-Host "Error, this script only supports producttype of 1) Work Station, 2) Domain Controller, or 3) Server."
-            Exit 1
+            throw "Error, this script only supports producttype of 1) Work Station, 2) Domain Controller, or 3) Server."
         }
     }
 }
