@@ -194,5 +194,5 @@ try{
     }
 }
 catch{
-    Write-Host "Installation failed with error message: $($PSItem.ToString())"
+    throw "Installation failed with error message: $($PSItem.ToString())"
 }
