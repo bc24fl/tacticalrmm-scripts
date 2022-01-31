@@ -3,10 +3,11 @@
     Installs Sophos Endpoint via the Sophos API https://developer.sophos.com/apis
 
 .REQUIREMENTS
-    You will need API credentials to use this script.  The instructions are slightly different depending who you are.
-    For Partners : https://developer.sophos.com/getting-started (Only Step 1 Required For API Credentials)
-    For Organizations: https://developer.sophos.com/getting-started-organization (Only Step 1 Required For API Credentials)
-    For Tenants	: https://developer.sophos.com/getting-started-tenant (Only Step 1 Required For API Credentials)
+    You will need API credentials to use this script.  The instructions are slightly different depending who you are. 
+    (Only Step 1 Required For API Credentials)
+    For Partners : https://developer.sophos.com/getting-started 
+    For Organizations: https://developer.sophos.com/getting-started-organization 
+    For Tenants	: https://developer.sophos.com/getting-started-tenant 
 
 .INSTRUCTIONS
     1. Get your API Credentials (Client Id, Client Secret) using the steps in the Requirements section
@@ -26,6 +27,7 @@
 	V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
 	V1.1 Added error handling for each Invoke-Rest Call for easier troubleshooting and graceful exit.
 	V1.2 Added support for more than 100 tenants.
+    V1.3 Removed Chocolately dependency
 	
 #>
 
@@ -176,11 +178,11 @@ foreach ($installer in $endpointInstallers){
 
 try{
     Write-Host "Checking if Sophos Endpoint installed.  Please wait..."
-    $AppInstalled = & "choco" "list" "-li"
 
-    if ($AppInstalled -like '*Sophos Endpoint Agent*'){
-        Write-Host "Sophos Endpoint is installed.  Skipping installation."
-    } else {
+    $software = "Sophos Endpoint Agent";
+    $installed = ((Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).DisplayName -Match $software).Length -gt 0
+
+    if(-Not $installed) {
         Write-Host "Sophos Endpoint is NOT installed.  Installing now..."
 
         Write-Host "Downloading Sophos from " + $installUrl + " Please wait..." 
@@ -195,6 +197,9 @@ try{
         Write-Host "Running Sophos Setup... Please wait up to 20 minutes for install to complete." 
         $appArgs = @("--products=" + $Products + " --quiet ")
         Start-Process -Filepath $outpath -ArgumentList $appArgs
+
+    } else {
+        Write-Host "Sophos Endpoint is installed.  Skipping installation."
     }
 }
 catch{
