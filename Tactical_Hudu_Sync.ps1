@@ -32,23 +32,19 @@ param(
 )
 
 if ([string]::IsNullOrEmpty($ApiKeyTactical)) {
-    Write-Output "ApiKeyTactical must be defined. Use -ApiKeyTactical <value> to pass it."
-    Exit 1
+    throw "ApiKeyTactical must be defined. Use -ApiKeyTactical <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($ApiUrlTactical)) {
-    Write-Output "ApiUrlTactical without the https:// must be defined. Use -ApiUrlTactical <value> to pass it."
-    Exit 1
+    throw "ApiUrlTactical without the https:// must be defined. Use -ApiUrlTactical <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($ApiKeyHudu)) {
-    Write-Output "ApiKeyHudu must be defined. Use -ApiKeyHudu <value> to pass it."
-    Exit 1
+    throw "ApiKeyHudu must be defined. Use -ApiKeyHudu <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($ApiUrlHudu)) {
-    Write-Output "ApiUrlHudu without the https:// must be defined. Use -ApiUrlHudu <value> to pass it."
-    Exit 1
+    throw "ApiUrlHudu without the https:// must be defined. Use -ApiUrlHudu <value> to pass it."
 }
 
 if ([string]::IsNullOrEmpty($HuduAssetName)) {
@@ -66,8 +62,7 @@ try {
     }
 }
 catch {
-    Write-Host "Installation of HuduAPI failed.  Please install HuduAPI manually first by running: 'Install-Module HuduAPI' on server."
-    Exit 1
+    throw "Installation of HuduAPI failed.  Please install HuduAPI manually first by running: 'Install-Module HuduAPI' on server."
 }
 
 $headers= @{
@@ -167,8 +162,7 @@ try {
     $agentsResult = Invoke-RestMethod -Method 'Get' -Uri "https://$ApiUrlTactical/agents" -Headers $headers -ContentType "application/json"
 }
 catch {
-    Write-Host "Error invoking rest call on Tactical RMM with error: $($PSItem.ToString())"
-    Exit 1
+    throw "Error invoking rest call on Tactical RMM with error: $($PSItem.ToString())"
 }
 
 foreach ($agents in $agentsResult) {
