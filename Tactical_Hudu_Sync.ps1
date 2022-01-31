@@ -13,6 +13,14 @@
     - This script compares Tactical's Client Name with Hudu's Company Names and if there is a match (case sensitive) 
       it creates/syncs asset based on hostname.  Nothing will be created or synced if a company match is not found.  
 
+.PARAMETERS
+    - $ApiKeyTactical   - Tactical API Key
+    - $ApiUrlTactical   - Tactical API Url
+    - $ApiKeyHudu       - Hudu API Key
+    - $ApiUrlHudu       - Hudu API Url
+    - $HuduAssetName    - The name of the asset in Hudu.  Defaults to "TacticalRMM Agents"
+    - $CopyMode         - If set, the script will not delete the assets in Hudu before syncing (Any items deleted from Tactical will remain in Hudu until manually removed).  
+
 .TODO
     - Add all tactical fields
     - On Hudu a Card should be created not a form
@@ -24,13 +32,14 @@
 #>
 
 param(
-    $ApiKeyTactical,
-    $ApiUrlTactical,
-    $ApiKeyHudu,
-    $ApiUrlHudu,
-    $HuduAssetName
+    [string] $ApiKeyTactical,
+    [string] $ApiUrlTactical,
+    [string] $ApiKeyHudu,
+    [string] $ApiUrlHudu,
+    [string] $HuduAssetName,
+    [switch] $CopyMode
 )
-function Get-Data {
+function Get-ArrayData {
     param(
         $data
     )
@@ -216,6 +225,17 @@ if (!$huduAssetLayout){
     $huduAssetLayout = Get-HuduAssetLayouts -name $HuduAssetName
 }
 
+if (!$CopyMode){
+    $assetsToDelete = Get-HuduAssets -assetlayoutid $huduAssetLayout.id
+    foreach ($asset in $assetsToDelete){
+        $assetId        = $asset.id
+        $assetName      = $asset.name
+        $assetCompanyId = $asset.company_id
+        Write-Host "Deleting $assetName from company id $assetCompanyId with an asset id of $assetId  "
+        Remove-HuduAsset -Id $asset.id -CompanyId $asset.company_id
+    }
+}
+
 try {
     $agentsResult = Invoke-RestMethod -Method 'Get' -Uri "https://$ApiUrlTactical/agents" -Headers $headers -ContentType "application/json"
 }
@@ -234,8 +254,8 @@ foreach ($agents in $agentsResult) {
         Write-Error "Error invoking agent detail rest call on Tactical RMM with error: $($PSItem.ToString())"
     }
 
-    $textDisk = Get-Data -data $agentDetailsResult.disks
-    $textCpu = Get-Data -data $agentDetailsResult.cpu_model
+    $textDisk   = Get-ArrayData -data $agentDetailsResult.disks
+    $textCpu    = Get-ArrayData -data $agentDetailsResult.cpu_model
 
     $fieldData = @(
 	@{
@@ -273,7 +293,7 @@ foreach ($agents in $agentsResult) {
         if ($asset){
             Set-HuduAsset -name $agents.hostname -company_id $huduCompaniesFiltered.id -asset_layout_id $huduAssetLayout.id -fields $fieldData -asset_id $asset.id
         } else {
-            Write-Host "Asset does not exists in Hudu.  Creating $agents.hostname"
+            Write-Host "Asset does not exist in Hudu.  Creating $agents.hostname"
             New-HuduAsset -name $agents.hostname -company_id $huduCompaniesFiltered.id -asset_layout_id $huduAssetLayout.id -fields $fieldData
         }
     }
