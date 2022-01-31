@@ -9,7 +9,7 @@
 
 .NOTES
     - Ideally, this script should be run on the Tactical RMM server however since there is no linux agent, you'll have to run this on one of your trusted Windows devices.
-    - This script compares Tactical's Client Name with Hudu's Company Names and syncs asset if there is a match (case sensitive).  Nothing will sync if a match is not found.  
+    - This script compares Tactical's Client Name with Hudu's Company Names and creates/syncs asset based on hostname if there is a match (case sensitive).  Nothing will sync if a company match is not found.  
 
 .TODO
     - Add all tactical fields
