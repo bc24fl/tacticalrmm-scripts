@@ -79,83 +79,83 @@ $huduAssetLayout = Get-HuduAssetLayouts -name $HuduAssetName
 
 if (!$huduAssetLayout){
     $fields = @(
-	@{
-		label = 'Client Name'
-		field_type = 'Text'
-		position = 1
-	},
-	@{
-		label = 'Site Name'
-		field_type = 'Text'
-		position = 2
-	},
     @{
-		label = 'Computer Name'
-		field_type = 'Text'
-		position = 3
-	},
+        label = 'Client Name'
+        field_type = 'Text'
+        position = 1
+    },
     @{
-		label = 'Status'
-		field_type = 'CheckBox'
+        label = 'Site Name'
+        field_type = 'Text'
+        position = 2
+    },
+    @{
+        label = 'Computer Name'
+        field_type = 'Text'
+        position = 3
+    },
+    @{
+        label = 'Status'
+        field_type = 'CheckBox'
         hint = 'Online/Offline'
-		position = 4
-	},
+        position = 4
+    },
     @{
-		label = 'Description'
-		field_type = 'Text'
-		position = 5
-	},
+        label = 'Description'
+        field_type = 'Text'
+        position = 5
+    },
     @{
-		label = 'Patches Pending'
-		field_type = 'CheckBox'
+        label = 'Patches Pending'
+        field_type = 'CheckBox'
         hint = ''
-		position = 6
-	},
+        position = 6
+    },
     @{
-		label = 'Last Seen'
-		field_type = 'Text'
-		position = 7
-	},
+        label = 'Last Seen'
+        field_type = 'Text'
+        position = 7
+    },
     @{
-		label = 'Logged Username'
-		field_type = 'Text'
-		position = 8
-	},
+        label = 'Logged Username'
+        field_type = 'Text'
+        position = 8
+    },
     @{
-		label = 'Needs Reboot'
-		field_type = 'CheckBox'
+        label = 'Needs Reboot'
+        field_type = 'CheckBox'
         hint = ''
-		position = 9
-	},
+        position = 9
+    },
     @{
-		label = 'Overdue Dashboard Alert'
-		field_type = 'CheckBox'
+        label = 'Overdue Dashboard Alert'
+        field_type = 'CheckBox'
         hint = ''
-		position = 10
-	},
+        position = 10
+    },
     @{
-		label = 'Overdue Email Alert'
-		field_type = 'CheckBox'
+        label = 'Overdue Email Alert'
+        field_type = 'CheckBox'
         hint = ''
-		position = 11
-	},
+        position = 11
+    },
     @{
-		label = 'Overdue Text Alert'
-		field_type = 'CheckBox'
+        label = 'Overdue Text Alert'
+        field_type = 'CheckBox'
         hint = ''
-		position = 12
-	},
+        position = 12
+    },
     @{
-		label = 'Pending Actions Count'
-		field_type = 'Number'
+        label = 'Pending Actions Count'
+        field_type = 'Number'
         hint = ''
-		position = 13
-	},
+        position = 13
+    },
     @{
-		label = 'Agent Id'
-		field_type = 'Text'
-		position = 99
-	})
+        label = 'Agent Id'
+        field_type = 'Text'
+        position = 99
+    })
     New-HuduAssetLayout -name $HuduAssetName -icon "fas fa-fire" -color "#5B17F2" -icon_color "#ffffff" -include_passwords $false -include_photos $false -include_comments $false -include_files $false -fields $fields
     Start-Sleep -s 5
     $huduAssetLayout = Get-HuduAssetLayouts -name $HuduAssetName
