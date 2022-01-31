@@ -173,9 +173,9 @@ foreach ($agents in $agentsResult) {
 
     $fieldData = @(
 	@{
-		client_name             = $agents.client_name
-		site_name               = $agents.site_name
-		computer_name           = $agents.hostname
+        client_name             = $agents.client_name
+        site_name               = $agents.site_name
+        computer_name           = $agents.hostname
         status                  = $agents.status
         description             = $agents.description
         patches_pending         = $agents.has_patches_pending
