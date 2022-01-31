@@ -30,6 +30,16 @@ param(
     $ApiUrlHudu,
     $HuduAssetName
 )
+function Get-Data {
+    param(
+        $data
+    )
+    $formattedData = ""
+    foreach ($item in $data){
+        $formattedData += $item -join ", "
+    }
+    return $formattedData
+}
 
 if ([string]::IsNullOrEmpty($ApiKeyTactical)) {
     throw "ApiKeyTactical must be defined. Use -ApiKeyTactical <value> to pass it."
@@ -51,7 +61,6 @@ if ([string]::IsNullOrEmpty($HuduAssetName)) {
     Write-Output "HuduAssetName param not defined.  Using default name TacticalRMM Agents."
     $HuduAssetName = "TacticalRMM Agents"
 }
-
 
 try {
     if (Get-Module -ListAvailable -Name HuduAPI) {
@@ -85,6 +94,7 @@ if (!$huduAssetLayout){
         label = 'Site Name'
         field_type = 'Text'
         position = 2
+        show_in_list = $true
     },
     @{
         label = 'Computer Name'
@@ -117,12 +127,14 @@ if (!$huduAssetLayout){
         label = 'Logged Username'
         field_type = 'Text'
         position = 8
+        show_in_list = $true
     },
     @{
         label = 'Needs Reboot'
         field_type = 'CheckBox'
         hint = ''
         position = 9
+        show_in_list = $true
     },
     @{
         label = 'Overdue Dashboard Alert'
@@ -149,6 +161,52 @@ if (!$huduAssetLayout){
         position = 13
     },
     @{
+        label = 'Make Model'
+        field_type = 'Text'
+        position = 14
+    },
+    @{
+        label = 'CPU Model'
+        field_type = 'RichText'
+        position = 15
+    },
+    @{
+        label = 'Total RAM'
+        field_type = 'Number'
+        hint = ''
+        position = 16
+    },
+    @{
+        label = 'Operating System'
+        field_type = 'Text'
+        position = 17
+    },
+    @{
+        label = 'Local Ips'
+        field_type = 'Text'
+        position = 18
+    },
+    @{
+        label = 'Public Ip'
+        field_type = 'Text'
+        position = 19
+    },
+    @{
+        label = 'Graphics'
+        field_type = 'Text'
+        position = 20
+    },
+    @{
+        label = 'Disks'
+        field_type = 'RichText'
+        position = 21
+    },    
+    @{
+        label = 'Created Time'
+        field_type = 'Text'
+        position = 22
+    },
+    @{
         label = 'Agent Id'
         field_type = 'Text'
         position = 99
@@ -167,6 +225,18 @@ catch {
 
 foreach ($agents in $agentsResult) {
 
+    $agentId = $agents.agent_id
+
+    try {
+        $agentDetailsResult = Invoke-RestMethod -Method 'Get' -Uri "https://$ApiUrlTactical/agents/$agentId" -Headers $headers -ContentType "application/json"
+    }
+    catch {
+        Write-Error "Error invoking agent detail rest call on Tactical RMM with error: $($PSItem.ToString())"
+    }
+
+    $textDisk = Get-Data -data $agentDetailsResult.disks
+    $textCpu = Get-Data -data $agentDetailsResult.cpu_model
+
     $fieldData = @(
 	@{
         client_name             = $agents.client_name
@@ -176,13 +246,22 @@ foreach ($agents in $agentsResult) {
         description             = $agents.description
         patches_pending         = $agents.has_patches_pending
         last_seen               = $agents.last_seen
-        logged_username         = $agents.logged_username
+        logged_username         = $agentDetailsResult.last_logged_in_user
         needs_reboot            = $agents.needs_reboot
         overdue_dashboard_alert = $agents.overdue_dashboard_alert
         overdue_email_alert     = $agents.overdue_email_alert
         overdue_text_alert      = $agents.overdue_text_alert
         pending_actions_count   = $agents.pending_actions_count
-        agent_id                = $agents.agent_id
+        total_ram               = $agentDetailsResult.total_ram
+        local_ips               = $agentDetailsResult.local_ips
+        created_time            = $agentDetailsResult.created_time
+        graphics                = $agentDetailsResult.graphics
+        make_model              = $agentDetailsResult.make_model
+        operating_system        = $agentDetailsResult.operating_system
+        public_ip               = $agentDetailsResult.public_ip
+        disks                   = $textDisk
+        cpu_model               = $textCpu
+        agent_id                = $agentId
 	})
 
     $huduCompaniesFiltered = Get-HuduCompanies -name $agents.client_name
