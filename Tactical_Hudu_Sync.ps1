@@ -28,7 +28,7 @@
     - reduce the amount of rest calls made
 		
 .VERSION
-	- v1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
+    - v1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
 #>
 
 param(
