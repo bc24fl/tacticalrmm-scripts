@@ -3,9 +3,8 @@
     Syncs agents from Tactical RMM to Hudu.
 
 .REQUIREMENTS
-    - You will need an API key from Hudu and Tactical RMM which should be passed as parameters.  
-    - DO NOT hard code API keys inside script.
-    - This script imports/installs powershell module https://github.com/lwhitelock/HuduAPI which you may have to manually install on errors.
+    - You will need an API key from Hudu and Tactical RMM which should be passed as parameters (DO NOT hard code in script).  
+    - This script imports/installs powershell module https://github.com/lwhitelock/HuduAPI which you may have to manually install if errors.
 
 .NOTES
     - Ideally, this script should be run on the Tactical RMM server however since there is no linux agent, 
@@ -20,15 +19,16 @@
     - $ApiUrlHudu       - Hudu API Url
     - $HuduAssetName    - The name of the asset in Hudu.  Defaults to "TacticalRMM Agents"
     - $CopyMode         - If set, the script will not delete the assets in Hudu before syncing (Any items deleted from Tactical will remain in Hudu until manually removed).  
-
+.EXAMPLE
+    - Tactical_Hudu_Sync.ps1 -ApiKeyTactical 1234567 -ApiUrlTactical api.yourdomain.com -ApiKeyHudu 1248ABBCD3 -ApiUrlHudu hudu.yourdomain.com -HuduAssetName "Tactical Agents" -CopyMode
 .TODO
-    - Add all tactical fields
-    - On Hudu a Card should be created not a form
-    - Reduce the amount of rest calls made
+    - fix Get-ArrayData so that it doesn't display all in one line
+    - add optional Hudu Relations to the built in Office 365 integration (e.g. last_logged_in_user so you can match a logged in user with their respective workstations)
+    - add more tactical fields
+    - reduce the amount of rest calls made
 		
 .VERSION
-	- V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
-	
+	- v1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
 #>
 
 param(
@@ -48,6 +48,19 @@ function Get-ArrayData {
         $formattedData += $item -join ", "
     }
     return $formattedData
+}
+function Get-CustomFieldData {
+    param(
+        $label,
+        $arrayData
+    )
+    $value = ""
+    foreach ($f in $arrayData) {
+        if ($f.label -eq $label){
+            $value = $f.value
+        }
+    }
+    return $value
 }
 
 if ([string]::IsNullOrEmpty($ApiKeyTactical)) {
@@ -290,7 +303,9 @@ foreach ($agents in $agentsResult) {
         
         $asset = Get-HuduAssets -name $agents.hostname -assetlayoutid $huduAssetLayout.id -companyid $huduCompaniesFiltered.id
 
-        if ($asset){
+        $huduAgentId = Get-CustomFieldData -label "Agent Id" -arrayData $asset.fields
+
+        if ($asset -And $huduAgentId -eq $agentId){
             Set-HuduAsset -name $agents.hostname -company_id $huduCompaniesFiltered.id -asset_layout_id $huduAssetLayout.id -fields $fieldData -asset_id $asset.id
         } else {
             Write-Host "Asset does not exist in Hudu.  Creating $agents.hostname"
