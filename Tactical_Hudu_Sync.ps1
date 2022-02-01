@@ -105,6 +105,7 @@ New-HuduBaseURL "https://$ApiUrlHudu"
 
 $huduAssetLayout = Get-HuduAssetLayouts -name $HuduAssetName
 
+# Create Hudu Asset Layout if it does not exist
 if (!$huduAssetLayout){
     $fields = @(
     @{
@@ -238,6 +239,7 @@ if (!$huduAssetLayout){
     $huduAssetLayout = Get-HuduAssetLayouts -name $HuduAssetName
 }
 
+# If not CopyMode set, delete all assets before performing sync
 if (!$CopyMode){
     $assetsToDelete = Get-HuduAssets -assetlayoutid $huduAssetLayout.id
     foreach ($asset in $assetsToDelete){
@@ -299,12 +301,14 @@ foreach ($agents in $agentsResult) {
 
     $huduCompaniesFiltered = Get-HuduCompanies -name $agents.client_name
 
+    # If Hudu Company matches a Tactical Client
     if ($huduCompaniesFiltered){
         
         $asset = Get-HuduAssets -name $agents.hostname -assetlayoutid $huduAssetLayout.id -companyid $huduCompaniesFiltered.id
 
         $huduAgentId = Get-CustomFieldData -label "Agent Id" -arrayData $asset.fields
 
+        # If asset exist and the Hudu asset matches Tactical based on agent_id update.  Else create new asset
         if ($asset -And $huduAgentId -eq $agentId){
             Set-HuduAsset -name $agents.hostname -company_id $huduCompaniesFiltered.id -asset_layout_id $huduAssetLayout.id -fields $fieldData -asset_id $asset.id
         } else {
