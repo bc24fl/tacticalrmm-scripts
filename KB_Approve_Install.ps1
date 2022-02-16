@@ -57,46 +57,43 @@ foreach ($agents in $agentsResult) {
     $agentHostname  = $agents.hostname
     $agentStatus    = $agents.status
 
-    if ($agentStatus -eq "online"){
-
-        # Get agent updates
-        try {
-            $agentUpdateResult = Invoke-RestMethod -Method 'Get' -Uri "https://$ApiUrlTactical/winupdate/$agentId/" -Headers $headers -ContentType "application/json"
-        }
-        catch {
-            Write-Error "Error invoking winupdate on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
-        }
-
-        foreach ($update in $agentUpdateResult){
-            $updateId       = $update.id 
-            $updateKb       = $update.kb 
-            $updateAction   = $update.action
-
-            if ($Kb -eq $updateKb -And $updateAction -eq "nothing"){
-                Write-Host "KB $updateKB is available for installation on agent $agentHostname"
-
-                # Set Approve KB
-                $body = @{
-                    "action"   = "approve"
-                }
-                try {
-                    $updateApproveKb = Invoke-RestMethod -Method 'Put' -Uri "https://$ApiUrlTactical/winupdate/$updateId/" -Body ($body|ConvertTo-Json) -Headers $headers -ContentType "application/json"
-                    Write-Host "Agent $agentHostname toggling approval of $updateKB"
-                }
-                catch {
-                    Write-Error "Error invoking Approve KB on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
-                }
-
-                # Set Install KB
-                $body = @{}
-                try {
-                    $updateInstallKb = Invoke-RestMethod -Method 'Post' -Uri "https://$ApiUrlTactical/winupdate/$agentId/install/" -Body ($body|ConvertTo-Json) -Headers $headers -ContentType "application/json"
-                    Write-Host "Agent $agentHostname toggling installation of $updateKB"  
-                }
-                catch {
-                    Write-Error "Error invoking Install KB on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
-                }
-            }
-        } 
+    # Get agent updates
+    try {
+        $agentUpdateResult = Invoke-RestMethod -Method 'Get' -Uri "https://$ApiUrlTactical/winupdate/$agentId/" -Headers $headers -ContentType "application/json"
     }
+    catch {
+        Write-Error "Error invoking winupdate on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
+    }
+
+    foreach ($update in $agentUpdateResult){
+        $updateId       = $update.id 
+        $updateKb       = $update.kb 
+        $updateAction   = $update.action
+
+        if ($Kb -eq $updateKb -And $updateAction -eq "nothing"){
+            Write-Host "KB $updateKB is available for installation on agent $agentHostname"
+
+            # Set Approve KB
+            $body = @{
+                "action"   = "approve"
+            }
+            try {
+                $updateApproveKb = Invoke-RestMethod -Method 'Put' -Uri "https://$ApiUrlTactical/winupdate/$updateId/" -Body ($body|ConvertTo-Json) -Headers $headers -ContentType "application/json"
+                Write-Host "Agent $agentHostname toggling approval of $updateKB"
+            }
+            catch {
+                Write-Error "Error invoking Approve KB on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
+            }
+
+            # Set Install KB
+            $body = @{}
+            try {
+                $updateInstallKb = Invoke-RestMethod -Method 'Post' -Uri "https://$ApiUrlTactical/winupdate/$agentId/install/" -Body ($body|ConvertTo-Json) -Headers $headers -ContentType "application/json"
+                Write-Host "Agent $agentHostname toggling installation of $updateKB"  
+            }
+            catch {
+                Write-Error "Error invoking Install KB on agent $agentHostname - $agentId with error: $($PSItem.ToString())"
+            }
+        }
+    } 
 } 
