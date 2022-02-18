@@ -15,7 +15,7 @@
     - $Kb               - Microsoft Kb number to install
    
 .EXAMPLE
-    - KB_Approve_Install.ps1 -ApiKeyTactical 1234567 -ApiUrlTactical api.yourdomain.com  -Kb "KB123456789"
+    - Win_KB_Approve_Install.ps1 -ApiKeyTactical 1234567 -ApiUrlTactical api.yourdomain.com  -Kb "KB123456789"
 		
 .VERSION
 	- v1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
