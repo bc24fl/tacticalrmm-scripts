@@ -8,7 +8,6 @@
 .NOTES
     - This script is designed to run on a single computer.  Ideally, it should be run on the Tactical RMM server or other trusted device.
     - This script cycles through each agent toggling the approval and installation of a specific kb.  Tactical RMM will do the installation when it's ready.
-    - An alternative approach is to use PSWindowsUpdate but that will require use of a 3rd party module installation on each endpoint.  
 
 .PARAMETERS
     - $ApiKeyTactical   - Tactical API Key
