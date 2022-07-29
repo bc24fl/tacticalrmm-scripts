@@ -57,6 +57,9 @@ if ([string]::IsNullOrEmpty($Products)) {
 
 Write-Host "Running Sophos Endpoint Installation Script On: $env:COMPUTERNAME"
 
+# Set TLS Version for web requests
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 # Find if workstation or server.  osInfo.ProductType returns 1 = workstation, 2 = domain controller, 3 = server
 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
 
