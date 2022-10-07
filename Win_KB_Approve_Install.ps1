@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Toggle the approval and installation of a specific KB accross all agents using the API and without installing any 3rd party libraries.
+    Toggle the approval and installation of a specific KB across all agents using the API and without installing any 3rd party libraries.
 
 .REQUIREMENTS
     - You will need an API key from Tactical RMM which should be passed as parameters (DO NOT hard code in script).  Do not run this on each agent (see notes).  
