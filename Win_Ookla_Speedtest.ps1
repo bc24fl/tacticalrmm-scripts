@@ -11,6 +11,7 @@ param(
     $MinDown
 )
 
+# Verify Arguments
 if ([string]::IsNullOrEmpty($MinUp)) {throw "MinUp must be defined. Use -MinUp <value> to pass it."}
 Try {
     $Null = [convert]::ToInt32($MinUp)
@@ -21,6 +22,8 @@ Try {
     $Null = [convert]::ToInt32($MinDown)
 } Catch {throw "MinDown must be a number."}
 
+
+# Verify Latest Download Link from Ookla Speedtest Website
 Try {
     $scrapedLinks = (Invoke-WebRequest -Uri 'https://www.speedtest.net/apps/cli').Links.Href  | Get-Unique 
     # Note: Possible Hack.  Assumes there is just one link with win64.zip
@@ -35,6 +38,7 @@ Try {
     }
 } Catch {throw "Error parsing website for Windows 64 download link."}
 
+# Download & Run Speed Test
 Try{
 
     Write-Host "Downloading SpeedTest from " + $downloadUrl + " Please wait..." 
@@ -53,7 +57,8 @@ Try{
     Write-Host "Running Ookla Speedtest.  Please wait for results..." 
 
     $stResults = & $executable --format=json --accept-license --accept-gdpr
-    
+
+    # Clean up
     Remove-Item -Path $downloadLocation -Force
     Remove-Item -Path $downloadLocation.replace('.zip','') -Recurse -Force
     
