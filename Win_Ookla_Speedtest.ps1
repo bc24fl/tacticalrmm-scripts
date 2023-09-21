@@ -23,7 +23,7 @@ Try {
 } Catch {throw "MinDown must be a number."}
 
 
-# Verify Latest Download Link from Ookla Speedtest Website
+# Get Latest Download Link from Ookla Speedtest Website
 Try {
     $scrapedLinks = (Invoke-WebRequest -Uri 'https://www.speedtest.net/apps/cli').Links.Href  | Get-Unique 
     # Note: Possible Hack.  Assumes there is just one link with win64.zip
