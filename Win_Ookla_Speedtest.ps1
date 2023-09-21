@@ -28,11 +28,10 @@ foreach ($url in $scrapedLinks){
     if ($url.contains('win64.zip')){
         $downloadUrl = $url
         $archiveName = Split-Path -Path $url -Leaf
+        $executableName = "speedtest.exe"
         break
     }
 }
-
-$executableName = "speedtest.exe"
 
 try{
 
@@ -78,8 +77,7 @@ try{
         exit 1
     }else{
         Write-Output "`nDownload or upload is GOOD"
-    }
-    
+    } 
 }
 catch{
     throw "Ookla Speedtest Installation failed with error message: $($PSItem.ToString())"
