@@ -3,7 +3,7 @@
     Performs a speedtest using Ookla CLI Speed Test Tool https://www.speedtest.net/apps/cli
 
 .NOTES
-	V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
+    V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
 #>
 
 param(
