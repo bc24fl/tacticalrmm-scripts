@@ -33,7 +33,7 @@ Try {
             break
         }
     }
-} Catch {throw "Error parsing website for Windows 64 download."}
+} Catch {throw "Error parsing website for Windows 64 download link."}
 
 Try{
 
