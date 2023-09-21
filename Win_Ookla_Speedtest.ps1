@@ -21,19 +21,21 @@ Try {
     $Null = [convert]::ToInt32($MinDown)
 } Catch {throw "MinDown must be a number."}
 
-$scrapedLinks = (Invoke-WebRequest -Uri 'https://www.speedtest.net/apps/cli').Links.Href  | Get-Unique 
-# Note: Possible Hack.  Assumes there is just one link with win64.zip
-#       There is likely a better way of doing this with regex but DONE IS BETTER THAN PERFECT ;)
-foreach ($url in $scrapedLinks){
-    if ($url.contains('win64.zip')){
-        $downloadUrl = $url
-        $archiveName = Split-Path -Path $url -Leaf
-        $executableName = "speedtest.exe"
-        break
+Try {
+    $scrapedLinks = (Invoke-WebRequest -Uri 'https://www.speedtest.net/apps/cli').Links.Href  | Get-Unique 
+    # Note: Possible Hack.  Assumes there is just one link with win64.zip
+    #       There is likely a better way of doing this with regex but DONE IS BETTER THAN PERFECT ;)
+    foreach ($url in $scrapedLinks){
+        if ($url.contains('win64.zip')){
+            $downloadUrl = $url
+            $archiveName = Split-Path -Path $url -Leaf
+            $executableName = "speedtest.exe"
+            break
+        }
     }
-}
+} Catch {throw "Error parsing website for Windows 64 download."}
 
-try{
+Try{
 
     Write-Host "Downloading SpeedTest from " + $downloadUrl + " Please wait..." 
     $tmpDir = [System.IO.Path]::GetTempPath()
@@ -79,6 +81,6 @@ try{
         Write-Output "`nDownload or upload is GOOD"
     } 
 }
-catch{
+Catch{
     throw "Ookla Speedtest Installation failed with error message: $($PSItem.ToString())"
 }
