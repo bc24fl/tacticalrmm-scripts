@@ -4,7 +4,6 @@
 
 .NOTES
 	V1.0 Initial Release by https://github.com/bc24fl/tacticalrmm-scripts/
-
 #>
 
 param(
@@ -21,9 +20,6 @@ if ([string]::IsNullOrEmpty($MinDown)) {throw "MinDown must be defined. Use -Min
 Try {
     $Null = [convert]::ToInt32($MinDown)
 } Catch {throw "MinDown must be a number."}
-
-
-## Get latest Windows 64 download file
 
 $scrapedLinks = (Invoke-WebRequest -Uri 'https://www.speedtest.net/apps/cli').Links.Href  | Get-Unique 
 # Note: Possible Hack.  Assumes there is just one link with win64.zip
